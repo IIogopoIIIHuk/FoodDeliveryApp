@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct AuthView: View {
-    //
+    
     @EnvironmentObject var appStateManager: AppStateManager
     
     @StateObject var presenter: AuthPresenter
     
     var interactor: AuthBusinessLogic
-    
+    //
     @State private var username: String = ""
     @State private var password: String = ""
     @FocusState private var focusedField: Field?

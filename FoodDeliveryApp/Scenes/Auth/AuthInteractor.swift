@@ -7,7 +7,6 @@ class AuthInteractor: AuthBusinessLogic, AuthDataStore {
     var someData: String?
     
     init() { }
-    
     //
     func login (request: Auth.Login.Request) {
         print("AuthInteractor: login called with username: \(request.username)")

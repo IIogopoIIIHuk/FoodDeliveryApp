@@ -10,7 +10,6 @@ class AppStateManager: ObservableObject {
         }
     }
     
-    
     @Published var mainScreenMessage: String?
 
     init() {
@@ -24,3 +23,4 @@ class AppStateManager: ObservableObject {
         print("AppStateManager: Logout performed.")
     }
 }
+//

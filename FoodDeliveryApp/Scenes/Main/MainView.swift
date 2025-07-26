@@ -10,11 +10,12 @@ struct MenuItem: Identifiable, Hashable {
     let imageName: String
 }
 
+
 struct PromoBanner: Identifiable {
     let id = UUID()
     let imageName: String
 }
-
+//
 // MARK: - Данные
 fileprivate let categories: [String] = ["Пицца", "Комбо", "Десерты", "Напитки", "Салаты", "Закуски"]
 

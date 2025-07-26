@@ -1,4 +1,5 @@
 import Foundation
+//
 
 class AuthRouter: AuthRoutingLogic, AuthDataPassing {
     var dataStore: AuthDataStore?
@@ -6,7 +7,7 @@ class AuthRouter: AuthRoutingLogic, AuthDataPassing {
     func navigateToMainScreen() {
     }
 }
-
+//
 extension Notification.Name {
     static let didAuthenticateSuccessfully = Notification.Name("didAuthenticateSuccessfully")
 }

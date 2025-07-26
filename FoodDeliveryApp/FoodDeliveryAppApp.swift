@@ -1,6 +1,5 @@
 import SwiftUI
 
-// Фабричная функция для создания модуля аутентификации
 func configureAuthModule() -> AuthView {
     let interactor = AuthInteractor()
     let presenter = AuthPresenter()
@@ -31,3 +30,4 @@ struct FoodDeliveryApp: App {
     }
 }
 
+//

@@ -34,11 +34,11 @@ struct ProfileView: View {
         .background(Color.backgroundMain)
     }
 }
-
-
+//
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView()
             .environmentObject(AppStateManager())
     }
 }
+//
