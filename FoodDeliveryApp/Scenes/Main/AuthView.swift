@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AuthView: View {
-    
+    //
     @EnvironmentObject var appStateManager: AppStateManager
     
     @StateObject var presenter: AuthPresenter

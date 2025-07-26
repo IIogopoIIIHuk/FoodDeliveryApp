@@ -35,7 +35,6 @@ protocol AuthDisplayLogic: ObservableObject {
     var viewModel: Auth.Login.ViewModel { get set }
 }
 
-// Эти протоколы больше не используются в обновленной архитектуре
 protocol AuthRoutingLogic {
     func navigateToMainScreen()
 }

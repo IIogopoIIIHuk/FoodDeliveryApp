@@ -1,7 +1,6 @@
 import SwiftUI
 
 // MARK: - Модели данных
-
 struct MenuItem: Identifiable, Hashable {
     let id = UUID()
     let category: String

@@ -10,6 +10,7 @@ class AppStateManager: ObservableObject {
         }
     }
     
+    
     @Published var mainScreenMessage: String?
 
     init() {
