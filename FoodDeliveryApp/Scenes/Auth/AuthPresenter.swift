@@ -1,6 +1,6 @@
 import Foundation
 import Combine
-//
+
 class AuthPresenter: AuthPresentationLogic, AuthDisplayLogic {
     
     @Published var isLoading: Bool = false { didSet { print("AuthPresenter: isLoading -> \(isLoading)") } }

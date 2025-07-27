@@ -1,47 +1,36 @@
 import SwiftUI
 
 struct AuthView: View {
-    
     @EnvironmentObject var appStateManager: AppStateManager
-    
     @StateObject var presenter: AuthPresenter
-    
     var interactor: AuthBusinessLogic
-    //
+
     @State private var username: String = ""
     @State private var password: String = ""
     @FocusState private var focusedField: Field?
-    
+
     @State private var showCustomBanner: Bool = false
     @State private var customBannerMessage: String = ""
-    
-    @State private var isPasswordVisible: Bool = false
 
-    
+    @State private var isPasswordVisible: Bool = false
+    @State private var keyboardOffset: CGFloat = 0
+
     enum Field: Hashable {
         case username
         case password
     }
-    
+
     init(interactor: AuthBusinessLogic, presenter: AuthPresenter) {
         self.interactor = interactor
         _presenter = StateObject(wrappedValue: presenter)
     }
-        
+
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottom) {
                 Color.backgroundMain.ignoresSafeArea()
-                
+
                 VStack {
-                    if showCustomBanner {
-                        ErrorBannerView(message: customBannerMessage) {
-                            showCustomBanner = false
-                            presenter.showAlert = false
-                        }
-                        .transition(.move(edge: .top))
-                        .animation(.default, value: showCustomBanner)
-                    }
                     Spacer()
                     AuthContent(
                         username: $username,
@@ -50,16 +39,31 @@ struct AuthView: View {
                         isPasswordVisible: $isPasswordVisible,
                         authenticateUser: authenticateUser
                     )
+                    .offset(y: -keyboardOffset)
                     Spacer()
                 }
-                
+
                 AuthBottomPanel(
                     presenter: presenter,
                     username: username,
                     password: password,
-                    authenticateUser: authenticateUser
+                    authenticateUser: authenticateUser,
+                    focusedField: $focusedField
                 )
             }
+            .overlay(
+                Group {
+                    if showCustomBanner {
+                        ErrorBannerView(message: customBannerMessage) {
+                            showCustomBanner = false
+                            presenter.showAlert = false
+                        }
+                        .transition(.move(edge: .top))
+                        .animation(.default, value: showCustomBanner)
+                    }
+                },
+                alignment: .top
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -94,9 +98,19 @@ struct AuthView: View {
                     }
                 }
             }
+            .onAppear {
+                NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notif in
+                    if let frame = notif.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                        keyboardOffset = frame.height / 3
+                    }
+                }
+                NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
+                    keyboardOffset = 0
+                }
+            }
         }
     }
-    
+
     private func authenticateUser() {
         focusedField = nil
         showCustomBanner = false
@@ -111,11 +125,11 @@ struct AuthContent: View {
     @Binding var username: String
     @Binding var password: String
     @FocusState.Binding var focusedField: AuthView.Field?
-    
+
     @Binding var isPasswordVisible: Bool
 
     let authenticateUser: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 32) {
             Image("TopPizzaLogo")
@@ -123,13 +137,13 @@ struct AuthContent: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 322, height: 103)
                 .padding(.top, 50)
-            
+
             VStack(spacing: 8) {
                 HStack {
                     Image(systemName: "person.fill")
                         .foregroundStyle(.gray)
                         .font(.system(size: 20))
-                    
+
                     TextField("Логин", text: $username)
                         .foregroundColor(.black)
                         .autocapitalization(.none)
@@ -148,12 +162,12 @@ struct AuthContent: View {
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.gray, lineWidth: 1)
                 )
-                
+
                 HStack {
                     Image(systemName: "lock.fill")
                         .foregroundStyle(.gray)
                         .font(.system(size: 20))
-                    
+
                     if isPasswordVisible {
                         TextField("Пароль", text: $password)
                             .foregroundColor(.black)
@@ -171,7 +185,7 @@ struct AuthContent: View {
                                 authenticateUser()
                             }
                     }
-                                        
+
                     Button(action: {
                         isPasswordVisible.toggle()
                     }) {
@@ -188,15 +202,20 @@ struct AuthContent: View {
                         .stroke(Color.gray, lineWidth: 1)
                 )
             }
+            Spacer()
         }
+        .offset(y: 100)
     }
 }
+
+
 
 struct AuthBottomPanel: View {
     @ObservedObject var presenter: AuthPresenter
     let username: String
     let password: String
     let authenticateUser: () -> Void
+    @FocusState.Binding var focusedField: AuthView.Field?
     
     var body: some View {
         VStack {
@@ -216,11 +235,15 @@ struct AuthBottomPanel: View {
                         .font(.system(size: 16, weight: .semibold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 48)
-                        .background(username.isEmpty || password.isEmpty ? Color.inactiveButton : Color.pink)
+                        .background(
+                            (focusedField == .username || focusedField == .password)
+                            ? Color.inactiveButton
+                            : Color.inactiveButton.opacity(0.4)
+                        )
                         .cornerRadius(20)
                 }
             }
-            .disabled(presenter.isLoading || username.isEmpty || password.isEmpty)
+            .disabled(presenter.isLoading)
             .padding(.horizontal, 16)
             .padding(.bottom, 50)
             .padding(.top, 20)
@@ -259,7 +282,7 @@ struct ErrorBannerView: View {
         .background(Color.white)
         .cornerRadius(20)
         .frame(width: 343, height: 50)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 4)
         .padding(.horizontal)
         .padding(.top, 8)
     }

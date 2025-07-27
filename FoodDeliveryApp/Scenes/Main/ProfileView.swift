@@ -13,10 +13,6 @@ struct ProfileView: View {
     var body: some View {
         VStack {
             
-            Text("Профиль")
-                .font(.title2)
-                .fontWeight(.bold)
-            
             Spacer()
             
             Button("Выйти") {
@@ -34,11 +30,11 @@ struct ProfileView: View {
         .background(Color.backgroundMain)
     }
 }
-//
+
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView()
             .environmentObject(AppStateManager())
     }
 }
-//
+
